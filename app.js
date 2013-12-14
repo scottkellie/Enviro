@@ -1,10 +1,11 @@
 var fs = require('fs')
 , http = require('http')
 , five = require('johnny-five'), board
-, Repl = require("repl")
+, repl = require("repl")
 , socketio = require('socket.io');
 //https://github.com/scottkellie/Enviromontal
-
+var replbo;
+var pins;
 var server = http.createServer(function (req, res)
 	{
 		res.writeHead(200, { 'Content-type': 'text/html' });
@@ -13,13 +14,12 @@ var server = http.createServer(function (req, res)
 	}).listen(8888, function ()
 	{
 		//create johnny-five arduino connection
-		board = new five.Board({port: "com6"});
+		board = new five.Board({port: "com6",repl: repl, pins: pins});
 
 		//initialize and declare variables related to Arduino
 		board.on("ready", function ()
 			{
-
-				console.log('Board connected');
+ 				console.log('Board connected');
 				console.log('Ready event. Repl instance auto-initialized');
 				console.log('detecting pins');
 // Create a new `photoresistor` hardware instance.
@@ -34,7 +34,7 @@ var server = http.createServer(function (req, res)
 				// set pin mode to analog input.
 				//this.pinMode("A5", five.Pin.INPUT);
 				
-				in5 = new five.Sensor({pin:"A5",freq:25,samples:10});
+				in5 = new five.Sensor({pin:"A5",freq:25,samples:20});
 				this.repl.inject({
     therm1: in5
   });
