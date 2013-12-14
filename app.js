@@ -16,14 +16,14 @@ var server = http.createServer(function (req, res) {
 	
         console.log('Board connected'),
        // lcd1 = new five.LCD({ pins: [12, 11, 5, 4, 3, 2] }),
-        in5 = new five.Sensor({pin:"A8",freq:25}),
-		var iled = 5
-		var ledpin[];
-		for (i=2; i>2+<10; i++){
-			ledpin[] = i;
+        in5 = new five.Sensor({pin:"A8",freq:25});
+		var iled = 6;
+		var ledpin;
+		for (i=2; i>2, i<iled(); i++){
+			ledpin[i] = ledpin;
 			console.log(ledpin);
 		}
-		
+		i = 0;
 		led8 = new five.Led(8),
 		led13 = new five.Led(13),
         console.log('led created'),
