@@ -9,7 +9,7 @@ var server = http.createServer(function (req, res)
 	{
 		res.writeHead(200, { 'Content-type': 'text/html' });
 		res.end(fs.readFileSync(__dirname + '/index.html'));
-
+		
 	}).listen(8888, function ()
 	{
 		//create johnny-five arduino connection
@@ -20,8 +20,10 @@ var server = http.createServer(function (req, res)
 			{
 
 				console.log('Board connected');
-				console.log("Ready event. Repl instance auto-initialized");
+				console.log('Ready event. Repl instance auto-initialized');
 				console.log('detecting pins');
+// Create a new `photoresistor` hardware instance.
+  
 
 				//Initialise pins and ports
 				// pin mode constants are available on the Pin class
@@ -30,32 +32,39 @@ var server = http.createServer(function (req, res)
 
 				// lcd1 = new five.LCD({ pins: [12, 11, 5, 4, 3, 2] }),
 				// set pin mode to analog input.
-				this.pinMode(5, five.Pin.INPUT);
+				//this.pinMode("A5", five.Pin.INPUT);
 				
-				in5 = new five.Sensor({pin:"A8",freq:25});
+				in5 = new five.Sensor({pin:"A5",freq:25,samples:10});
 				this.repl.inject({
-    test: "in5"
+    therm1: in5
   });
 				led5 = new five.Led(5),
 				this.repl.inject({
-    test: "led5"
+    out5: led5
   });
 				led13 = new five.Led(13),
 				this.repl.inject({
-    test: "led13"
+    out13: led13
   });
-				console.log('led created'),
+				console.log(in5.value+" "+led5.value+" "+led13.value),
 				//  lcd1.on("ready", function () {
 				// creates a heart!
 				//      lcd1.clear(),
 				//      lcd1.createChar(0x07,
 				//          [0x00, 0x0a, 0x1f, 0x1f, 0x0e, 0x04, 0x00, 0x00]);
+photoresistor = new five.Sensor({pin: "A2",freq: 250, samples:20})
 
+  // Inject the `sensor` hardware into
+  // the Repl instance's context;
+  // allows direct command line access
+  this.repl.inject({
+  pot: photoresistor
+  });
 				console.log('initialised');
 			
 	
 	console.log('Listening at: http://localhost:8888');
-})
+
 	socketio.listen(server).on('connection', function (socket)
 		{
 
@@ -65,6 +74,7 @@ var server = http.createServer(function (req, res)
 				});
 			socket.on('message', function (msg)
 				{
+	
 					var inmsg = msg.toString();
 					//var queryData = msg.parse(msg);
 					date = new Date(),
@@ -86,23 +96,27 @@ var server = http.createServer(function (req, res)
 						led5.strobe(50);
 						led5.on();
 					}
-					else
-					{
-						if(inmsg >=0)
+					if(inmsg >=0)
 						{
 							led5.strobe(inmsg),
 							console.log(inmsg);
 							console.log('Led strobing at ' + inmsg + 'ms');
 							console.log('Message Received: ', inmsg);
-							socket.broadcast.emit('message', inmsg);
 						}
-
-
-					}
+					if(inmsg== "in5:val")
+					{
+					// "data" get the current reading from the photoresistor
+					//in5.on("data", function() {
+					 console.log( in5.value );
+					 socket.broadcast.emit('value', in5.value);
+					 //socket.broadcast.emit('value', inmsg)
+					 };
+				
+					
 				});
-		});
-	});
-
+});
+});
+});
 
 //################Scratchpad#######################
 /*

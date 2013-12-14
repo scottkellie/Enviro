@@ -48,15 +48,17 @@
 
             iosocket.on('connect', function () {
                 $('#incomingChatMessages').append($('<li>Connected</li>'));
-
+			alert('IOSOCKET CONNECTED');
                 iosocket.on('message', function(message) {
                     $('#incomingChatMessages').append($('<li></li>').text(message));
                 });
                 iosocket.on('disconnect', function() {
                     $('#incomingChatMessages').append('<li>Disconnected</li>');
                 });
-            });
-
+				iosocket.on('value', function(message){
+					$('#incomingChatMessages').append($('<li>value:</li>').text(message));
+				});
+				});
             $('#outgoingChatMessage').keypress(function(event) {
                 if(event.which == 13) {
                     event.preventDefault();
@@ -64,13 +66,14 @@
                     $('#incomingChatMessages').append($('<li></li>').text($('#outgoingChatMessage').val()));
                     $('#outgoingChatMessage').val('');
                 }
+				
             });
         });
         function connect(){
             //open socket
             iosocket = io.connect();
             iosocket.send('ConnectionButtonClicked');
-            alert('IOSOCKET CONNECTED');
+            //alert('IOSOCKET CONNECTED');
             output.innerHTML = "connecting..." ;
         } // end connect
         function sendMessage(){
