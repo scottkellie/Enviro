@@ -26,6 +26,7 @@
     "serialport": "*",
     "firmata": "*",
     "johnny-five": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "repl": "~0.1.3"
   }
 }

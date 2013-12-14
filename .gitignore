@@ -1,6 +1,7 @@
 #################
 ## Eclipse
 #################
+node_modules/
 .gitignore
 .gitattributes
 *.log
