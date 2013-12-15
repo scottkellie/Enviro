@@ -28,24 +28,45 @@ var server = http.createServer(function (req, res)
 				//Initialise pins and ports
 				// pin mode constants are available on the Pin class
 				this.pinMode(13, five.Pin.OUTPUT);
-
-
+				
 				// lcd1 = new five.LCD({ pins: [12, 11, 5, 4, 3, 2] }),
 				// set pin mode to analog input.
 				//this.pinMode("A5", five.Pin.INPUT);
 				
-				in5 = new five.Sensor({pin:"A5",freq:25,samples:20});
+				in5 = new five.Sensor({pin:"A5",freq:25,samples:20}),
 				this.repl.inject({
     therm1: in5
   });
 				led5 = new five.Led(5),
+				
 				this.repl.inject({
     out5: led5
   });
-				led13 = new five.Led(13),
+				relay1 = new five.Led(10),
+				this.repl.inject({
+    out11: relay1
+  });
+  
+  relay2 = new five.Led(11),
+				this.repl.inject({
+    out12: relay2
+	});
+	
+	relay3 = new five.Led(12),
+				this.repl.inject({
+    out13: relay3
+  });
+  
+  relay4 = new five.Led(14),
+				this.repl.inject({
+    out14: relay4
+  });
+  
+  				led13 = new five.Led(13),
 				this.repl.inject({
     out13: led13
   });
+  
 				console.log(in5.value+" "+led5.value+" "+led13.value),
 				//  lcd1.on("ready", function () {
 				// creates a heart!
@@ -87,11 +108,52 @@ photoresistor = new five.Sensor({pin: "A2",freq: 250, samples:20})
 						{
 							console.log(dateTime+"  "+inmsg);
 						}, 600);
-					if(inmsg == "off")
+						if(inmsg== "in5:val")
+					{
+					// "data" get the current reading from the photoresistor
+					//in5.on("data", function() {
+					 console.log( in5.value );
+					 socket.broadcast.emit('value', in5.value);
+					 //socket.broadcast.emit('value', inmsg)
+					 };
+					    if (inmsg === "relay1:on") {
+                relay1.on();
+                console.log('relay1 on');
+            }
+            if (inmsg === "relay2:on") {
+                relay2.on();
+                console.log('relay2 on');
+            }
+            if (inmsg === "relay3:on") {
+                relay3.on();
+                console.log('relay3 on');
+            }
+               if (inmsg === "relay4:on") {
+                relay4.on();
+                console.log('relay4 on');
+            }
+            ///turn relays off
+            if (inmsg === "relay1:off") {
+                relay1.off();
+                console.log('relay1 off');
+            }
+            if (inmsg === "relay2:off") {
+                relay2.off();
+                console.log('relay2 off');
+            }
+            if (inmsg === "relay3:off") {
+                relay3.off();
+                console.log('relay3 off');
+            }
+            if (inmsg === "relay4:off") {
+                relay4.off();
+                console.log('relay4 off');
+            }
+			if(inmsg == "led5:off")
 					{
 						led5.off();
 											}
-					if(inmsg == "on")
+					if(inmsg == "led5:on")
 					{
 						led5.strobe(50);
 						led5.on();
@@ -103,17 +165,7 @@ photoresistor = new five.Sensor({pin: "A2",freq: 250, samples:20})
 							console.log('Led strobing at ' + inmsg + 'ms');
 							console.log('Message Received: ', inmsg);
 						}
-					if(inmsg== "in5:val")
-					{
-					// "data" get the current reading from the photoresistor
-					//in5.on("data", function() {
-					 console.log( in5.value );
-					 socket.broadcast.emit('value', in5.value);
-					 //socket.broadcast.emit('value', inmsg)
-					 };
-				
-					
-				});
+					});
 });
 });
 });
