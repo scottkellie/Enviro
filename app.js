@@ -1,11 +1,16 @@
 var fs = require('fs')
-, http = require('http')
+, http = require('http'),server
 , five = require('johnny-five'), board
 , repl = require("repl")
-, socketio = require('socket.io');
-//https://github.com/scottkellie/Enviromontal
+, socketio = require('socket.io')
+, io = require('socket.io');
 var replbo;
 var pins;
+//https://github.com/scottkellie/Enviromontal
+///
+///
+
+///
 var server = http.createServer(function (req, res)
 	{
 		res.writeHead(200, { 'Content-type': 'text/html' });
@@ -13,13 +18,15 @@ var server = http.createServer(function (req, res)
 		
 	}).listen(8888, function ()
 	{
+
+		
 		//create johnny-five arduino connection
 		board = new five.Board({port: "com6",repl: repl, pins: pins});
 
 		//initialize and declare variables related to Arduino
 		board.on("ready", function ()
 			{
- 				console.log('Board connected');
+				console.log('Board connected');
 				console.log('Ready event. Repl instance auto-initialized');
 				console.log('detecting pins');
 // Create a new `photoresistor` hardware instance.
@@ -39,36 +46,36 @@ var server = http.createServer(function (req, res)
 				
 				in5 = new five.Sensor({pin:"A5",freq:25,samples:20}),
 				this.repl.inject({
-    therm1: in5
+	therm1: in5
   });
 				led5 = new five.Led(5),
 				
 				this.repl.inject({
-    out5: led5
+	out5: led5
   });
 				relay1 = new five.Led(10),
 				this.repl.inject({
-    out11: relay1
+	out11: relay1
   });
   
   relay2 = new five.Led(11),
 				this.repl.inject({
-    out12: relay2
+	out12: relay2
 	});
 	
 	relay3 = new five.Led(12),
 				this.repl.inject({
-    out13: relay3
+	out13: relay3
   });
   
   relay4 = new five.Led(14),
 				this.repl.inject({
-    out14: relay4
+	out14: relay4
   });
   
-  				led13 = new five.Led(13),
+				led13 = new five.Led(13),
 				this.repl.inject({
-    out13: led13
+	out13: led13
   });
   
 				console.log(in5.value+" "+led5.value+" "+led13.value),
@@ -120,39 +127,39 @@ photoresistor = new five.Sensor({pin: "A2",freq: 250, samples:20})
 					 socket.broadcast.emit('value', in5.value);
 					 //socket.broadcast.emit('value', inmsg)
 					 };
-					    if (inmsg === "relay1:on") {
-                relay1.on();
-                console.log('relay1 on');
-            }
-            if (inmsg === "relay2:on") {
-                relay2.on();
-                console.log('relay2 on');
-            }
-            if (inmsg === "relay3:on") {
-                relay3.on();
-                console.log('relay3 on');
-            }
-               if (inmsg === "relay4:on") {
-                relay4.on();
-                console.log('relay4 on');
-            }
-            ///turn relays off
-            if (inmsg === "relay1:off") {
-                relay1.off();
-                console.log('relay1 off');
-            }
-            if (inmsg === "relay2:off") {
-                relay2.off();
-                console.log('relay2 off');
-            }
-            if (inmsg === "relay3:off") {
-                relay3.off();
-                console.log('relay3 off');
-            }
-            if (inmsg === "relay4:off") {
-                relay4.off();
-                console.log('relay4 off');
-            }
+						if (inmsg === "relay1:on") {
+				relay1.on();
+				console.log('relay1 on');
+			}
+			if (inmsg === "relay2:on") {
+				relay2.on();
+				console.log('relay2 on');
+			}
+			if (inmsg === "relay3:on") {
+				relay3.on();
+				console.log('relay3 on');
+			}
+			   if (inmsg === "relay4:on") {
+				relay4.on();
+				console.log('relay4 on');
+			}
+			///turn relays off
+			if (inmsg === "relay1:off") {
+				relay1.off();
+				console.log('relay1 off');
+			}
+			if (inmsg === "relay2:off") {
+				relay2.off();
+				console.log('relay2 off');
+			}
+			if (inmsg === "relay3:off") {
+				relay3.off();
+				console.log('relay3 off');
+			}
+			if (inmsg === "relay4:off") {
+				relay4.off();
+				console.log('relay4 off');
+			}
 			if(inmsg == "led5:off")
 					{
 						led5.off();

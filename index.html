@@ -1,20 +1,25 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.map"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <title>Enviromontal v1_0_001</title>
-    <meta charset = "UTF-8" />
-    <style type = "text/css">
+    <meta charset="UTF-8" />
+    <style type="text/css">
         h1 {
             text-align: center;
         }
+
         .error {
             color: red;
         }
+
         .response {
             color: blue;
         }
+
         fieldset {
             width: 80%;
             margin: auto;
@@ -22,6 +27,7 @@
             -moz-box-shadow: 10px 10px 10px #000000;
             -webkit-box-shadow: 10px 10px 10px #000000;
         }
+
         #output {
             font-family: monospace;
             width: 80%;
@@ -37,55 +43,57 @@
             -webkit-box-shadow: 20px 20px 20px #000000;
         }
     </style>
-    <script>src="/lib/socket.io.js"></script>
-    <script language="javascript" type="text/javascript">
-        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script language="javascript" type="text/javascript"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.map"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        $(function(){
+        
 
-            var iosocket = io.connect();
+        $(function () {
+
+            var iosocket = io.connect('ws://localhost:8888');
 
             iosocket.on('connect', function () {
                 $('#incomingChatMessages').append($('<li>Connected</li>'));
-                        alert('IOSOCKET CONNECTED');
-                iosocket.on('message', function(message) {
+                alert('IOSOCKET CONNECTED');
+                iosocket.on('message', function (message) {
                     $('#incomingChatMessages').append($('<li></li>').text(message));
                 });
-                iosocket.on('disconnect', function() {
+                iosocket.on('disconnect', function () {
                     $('#incomingChatMessages').append('<li>Disconnected</li>');
                 });
-                                iosocket.on('value', function(message){
-                                        $('#incomingChatMessages').append($('<li>value:</li>').text(message));
-                                });
-                                });
-            $('#outgoingChatMessage').keypress(function(event) {
-                if(event.which == 13) {
+                iosocket.on('value', function (message) {
+                    $('#incomingChatMessages').append($('<li>value:</li>').text(message));
+                });
+            });
+            $('#outgoingChatMessage').keypress(function (event) {
+                if (event.which == 13) {
                     event.preventDefault();
                     iosocket.send($('#outgoingChatMessage').val());
                     $('#incomingChatMessages').append($('<li></li>').text($('#outgoingChatMessage').val()));
                     $('#outgoingChatMessage').val('');
                 }
-                                
+
             });
         });
-        function connect(){
+        function connect() {
             //open socket
-            iosocket = io.connect();
+            iosocket = iosocket.connect();
             iosocket.send('ConnectionButtonClicked');
             //alert('IOSOCKET CONNECTED');
-            output.innerHTML = "connecting..." ;
+            output.innerHTML = "connecting...";
         } // end connect
-        function sendMessage(){
-                //get message from text box
+        function sendMessage() {
+            //get message from text box
             txtMessage = document.getElementById("txtMessage");
             //make variable of message
-                        message = txtMessage.value;
+            message = txtMessage.value;
             //pass message to server
             iosocket.send(message);
             alert("<p>MESSAGE SENT: " + message + "</p>");
         }
-        function disconnect(){
+        function disconnect() {
             io.close();
             alert('disconnected');
         }
@@ -93,28 +101,30 @@
     </script>
 </head>
 <body>
-<form action = "">
-    <fieldset>
-        <button type = "button"
-                onclick = "connect()">
-            connect to server
-        </button>
-        <label for = "txtMessage">
-            <input type = "text"
-                   id = "txtMessage"
-                   value = "HTML5" />
-        </label>
-        <button type = "button"
-                onclick = "sendMessage()">
-            send message
-        </button>
-        <button type = "button"
-                onclick = "disconnect()">
-            disconnect
-        </button>
-        <ul>Incoming Chat: <ul id="incomingChatMessages"></ul>
-        <input type="text" id="outgoingChatMessage">
-    </fieldset>
-</form>
+    <form action="">
+        <fieldset>
+            <button type="button"
+                    onclick="connect()">
+                connect to server
+            </button>
+            <label for="txtMessage">
+                <input type="text"
+                       id="txtMessage"
+                       value="HTML5" />
+            </label>
+            <button type="button"
+                    onclick="sendMessage()">
+                send message
+            </button>
+            <button type="button"
+                    onclick="disconnect()">
+                disconnect
+            </button>
+            <ul>
+                Incoming Chat:
+                <ul id="incomingChatMessages"></ul>
+                <input type="text" id="outgoingChatMessage">
+        </fieldset>
+    </form>
 </body>
 </html>
