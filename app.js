@@ -27,8 +27,12 @@ var server = http.createServer(function (req, res)
 
 				//Initialise pins and ports
 				// pin mode constants are available on the Pin class
-				this.pinMode(13, five.Pin.OUTPUT);
-				
+				/* board.pinMode(13, five.Pin.OUTPUT);
+				board.pinMode(10, five.Pin.OUTPUT);
+				board.pinMode(11, five.Pin.OUTPUT);
+				board.pinMode(12, five.Pin.OUTPUT);
+				board.pinMode(14, five.Pin.OUTPUT);
+				board.pinMode(14, five.Pin.OUTPUT); */
 				// lcd1 = new five.LCD({ pins: [12, 11, 5, 4, 3, 2] }),
 				// set pin mode to analog input.
 				//this.pinMode("A5", five.Pin.INPUT);
