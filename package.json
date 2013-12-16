@@ -26,7 +26,16 @@
     "serialport": "*",
     "firmata": "*",
     "johnny-five": "*",
-    "socket.io": "*",
-    "repl": "~0.1.3"
+    "socket.io": "~0.9.16",
+    "repl": "~0.1.3",
+    "primus": "~1.5.0",
+    "ws": "~0.4.31",
+    "socket.io-client": "~0.9.16",
+    "primus-multiplex": "~2.2.0",
+    "primus.io": "~2.0.2",
+    "emitter": "0.0.1",
+    "primus-emitter": "~2.0.5",
+    "primus-rooms": "~2.2.0",
+    "path": "~0.4.9"
   }
 }
