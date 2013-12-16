@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <title></title>
+</head>
+<body>
+    <script src="/lib/primus.js"></script>
+    <script>
+        var primus = Primus.connect(url, { maxDelay: Infinity // Number: The max delay for a reconnect retry.
+    , minDelay: 500 // Number: The minimum delay before we reconnect.
+    , retries: 10 //Number: How many times should we attempt to reconnect. 
+        });
+        //Once you've created your Primus instance you're ready to go. 
+        //When you want to write data to your server you can just call the .write method:
+        primus.write('message');
+        //It automatically encodes your messages using the parser that you've specified on the server.
+        //So sending objects back and forth between the server is nothing different then just writing:
+        primus.write({ foo: 'bar' });
+        //When you are sending messages to the server, you don't have to wait for the open event to happen, 
+        //the client will automatically buffer all the data you've send and automatically write it to the server once it's connected. 
+        //The client supports a couple of different events.
+        primus.on('data', function message(data) {
+            console.log('Received a new message from the server', data);
+        });
+        //The open event is emitted when we've successfully created a connection with the server.
+        //It will also be emitted when we've successfully reconnected when the connection goes down unintentionally.
+        //
+        primus.on('open', function open() {
+            console.log('Connection is alive and kicking');
+        });
+
+        primus.on('error', function error(err) {
+            console.error('Something horrible has happened', err, err.message);
+        });
+        //The reconnect event is emitted when we're attempting to reconnect to the server.
+        //This all happens transparently and it's just a way for you to know when these reconnects are actually happening.
+        primus.on('reconnect', function () {
+            console.log('Reconnect attempt started');
+        });
+        //This event would be ideal to update your application's UI when the connection is down and you are trying to reconnect in x seconds.
+        primus.on('reconnecting', function (opts) {
+            console.log('Reconnecting in %d ms', opts.timeout);
+            console.log('This is attempt %d out of %d', opts.attempt, opts.retries);
+        });
+        //The end event is emitted when we've closed the connection. 
+        primus.on('end', function () {
+            console.log('Connection closed');
+        });
+        //End function 
+        primus.end();
+
+
+        ////****CLient*****
+
+        //When you've created your primus instance you can access the Socket property on it. 
+        //This Socket is automatically configured to connect to the correct pathname,
+        //using the same transformer and parser that you've specified when you created your primus instance.
+        var primus = new Primus(server, { transformer: transformer, parser: parser })
+ , Socket = primus.Socket;
+
+        var client = new Socket('http://localhost:8080');
+        //
+        // It has the same interface as the client, so you can just socket.write or
+        // listen for the `open` events etc.
+        //
+        //connection and error handling
+        document.getElementById('connect').onclick = function click() {
+            if (primus) primus.end();
+
+            primus = new Primus();
+
+            primus.on('reconnect', function reconnect(opts) {
+                log('reconnect', 'Reconnecting', 'We are <strong>scheduling</strong> a new reconnect attempt. This is attempt <strong>' + opts.attempt + '</strong> and will trigger a reconnect operation in <strong>' + opts.timeout + '</strong> ms.');
+                document.getElementById('connect').innerHTML = 'reconnecting';
+            });
+
+            primus.on('reconnect', function reconnect() {
+                log('reconnect', 'Reconnect', 'Starting the reconnect attempt, hopefully we get a connection!');
+            });
+
+            primus.on('online', function online() {
+                log('network', 'Online', 'We have regained control over our internet connection.');
+            });
+
+            primus.on('offline', function online() {
+                log('network', 'Offline', 'We lost our internet connection.');
+            });
+
+            primus.on('open', function open() {
+                log('open', 'Open', 'The connection has been established.');
+                document.getElementById('connect').innerHTML = 'connected';
+            });
+
+            primus.on('error', function error(err) {
+                log('error', 'Erorr', 'An unknown error has occured <code>' + err.message + '</code>');
+            });
+
+            primus.on('data', function incoming(data) {
+                log('data', 'Received data', 'string' === typeof data ? data : '<pre><code>' + JSON.stringify(data, null, 2) + '</code></pre>');
+            });
+
+            primus.on('end', function end() {
+                log('end', 'End', 'The connection has ended.');
+                document.getElementById('connect').innerHTML = 'connect';
+            });
+
+            primus.on('close', function end() {
+                log('close', 'close', 'We\'ve lost the connection to the server.');
+            });
+        }
+
+        // connect from a different node process where you don't have access to your primus instance and the compatible Socket instance. 
+        var Socket = Primus.createSocket({ transformer: websockets, parser: json })
+        , client = new Socket('http://localhost:8080');
+        //sample at /<pathname>/spec
+
+
+
+
+
+        var WebSocketClient = new WebSocket("ws://localhost/socketserver");
+       // var WebSocketClient = new WebSocket("ws://192.168.0.27:8888", "protocolOne");
+
+        var client = WebSocketClient(wsurl);
+
+        client.on('connectFailed', function(error) {
+            console.log('Connect Error: ' + error.toString());
+        });
+
+        client.on('connect', function(connection) {
+            console.log('WebSocket client connected');
+            connection.on('error', function(error) {
+                console.log("Connection Error: " + error.toString());
+            });
+            connection.on('close', function() {
+                console.log('echo-protocol Connection Closed');
+            });
+            connection.on('message', function(message) {
+                if (message.type === 'utf8') {
+                    console.log("Received: '" + message.utf8Data + "'");
+                }
+            });
+
+            function sendNumber() {
+                if (connection.connected) {
+                    var number = Math.round(Math.random() * 0xFFFFFF);
+                    connection.sendUTF(number.toString());
+                    setTimeout(sendNumber, 1000);
+                }
+            }
+            sendNumber();
+        });
+
+        client.connect('ws://localhost:8888/', 'echo-protocol');
+    </script>
+    <div itemid="top">
+   <input id="Connect" type="button" value="connect" />
+    </div>
+    <hr />
+    <div itemid="setup">
+    <input id="Setup" type="button" value="setup" />
+    </div>
+    <div itemid="inputs">
+    <input id="Inputs" type="button" value="inputs" />
+    </div>
+    <div itemid="outputs">
+    <input id="Outputs" type="button" value="Outputs" />
+    </div>
+    <div itemid="grpahs">
+    <input id="graphs" type="button" value="graphs" />
+    </div>
+</body>
+</html>

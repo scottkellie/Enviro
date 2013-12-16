@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+<script src="/lib/primus.io.js"></script>
+    <script>
+    var socket = Primus.connect('ws://localhost:8888');
+   
+    socket.on('data', function message(data) {
+        console.log('Received a new message from the server', data);
+    });
+  socket.on('open', function () {
+  fs.createReadStream('server.js', { encoding: 'utf-8' }).pipe(spark)
+  // Send request to join the news room
+  socket.send('hi', 'hello world client');
+
+  // listen to hello events
+  socket.on('hello', function (msg) {
+
+    console.log(msg); //-> hello from the server
+
+  });
+
+});
+    </script>
+</body>
+</html>
