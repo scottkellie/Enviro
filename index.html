@@ -48,12 +48,14 @@
     <script src="http://code.jquery.com/jquery-2.0.3.min.map"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="smoothie.js"></script>
+    <script src="http://github.com/joewalnes/smoothie/raw/master/smoothie.js"></script>
     <script>
         
         var iosocket = io.connect('http://localhost:8888');
+        var smoothie = new SmoothieChart();
+        smoothie.streamTo(document.getElementById("mycanvas"));
         $(function () {
-
+           
                 iosocket.on('connect', function () {
                 $('#incomingChatMessages').append($('<li>Connected</li>'));
                 alert('IOSOCKET CONNECTED');
@@ -92,14 +94,15 @@
             iosocket.send(message);
             alert("<p>MESSAGE SENT: " + message + "</p>");
         }
+        
         function sendMessageBtn(message) {
             //get message from text box
             //make variable of message
             
             //pass message to server
             iosocket.send(message);
-            var smoothie = new SmoothieChart();
-            smoothie.streamTo(document.getElementById("mycanvas"));
+            
+           
             // Data
             var line1 = new TimeSeries();
             
@@ -137,8 +140,11 @@
                 <input id="Out10Off" type="button" value="relay10:on" onclick="sendMessageBtn('relay1:off')" />
                 <input id="Out11On" type="button" value="relay11:off" onclick="sendMessageBtn('relay2:on')" />
                 <input id="Out11Off" type="button" value="relay11:on" onclick="sendMessageBtn('relay2:off')" /><br />
+            <div>
+                 <canvas id="mycanvas" width="400" height="100"></canvas>
+                </div>
                 <hr />
-                <canvas id="mycanvas" width="400" height="100"></canvas>
+               
                 Incoming Chat:
                 <div id="incomingChatMessages"></div>
                 &nbsp;</fieldset><hr />
