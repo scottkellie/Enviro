@@ -8,6 +8,7 @@ var util = require('util');
 var primus = new Primus(server, { transformer: 'socket.io', parser: 'JSON' });
 var path = require('path');
 var mime = require('mime');
+var stream = require('stream').Readable;
 /*
 http://qugstart.com/blog/node-js/node-js-restify-server-with-both-http-and-https/
 var https_options = {
@@ -37,9 +38,9 @@ http.createServer(_handler).listen(81);
 console.log('Server running at http://127.0.0.1:81/');
 
 function _handler(req, res) {
-	var root = "..",
+	var root = "",
 		url = "",
-		contentType = "text/plain",
+		contentType = "",
 		filePath = "";
 
 		//All following code goes here
@@ -48,7 +49,7 @@ function _handler(req, res) {
 		res.end('Unsupported request method', 'utf8'); //End and send the response
 		return;
 	//Build filepath and serve requested file.
-	if ('.' + req.url !== './') {
+	if ('' + req.url !== './') {
 	filePath = root + req.url;
 	path.exists(filePath, serveRequestedFile);		
 } else {
@@ -66,34 +67,35 @@ function serveRequestedFile(file) {
 	}
 
 	//Following code will go here
-		}
 	var fileStream = fs.createReadStream(filePath);
 	var mime = require('mime-magic');
 
 mime(filePath, function (err, type) {
-    if (err) {
-        console.error(err.message);
-        // ERROR: cannot open `/path/to/foo.pdf' (No such file or directory)
-    } else {
-        console.log('Detected mime type: %s', type);
-        contentType = type;
-        // application/pdf
-    }
+	if (err) {
+		console.error(err.message);
+		// ERROR: cannot open `/path/to/foo.pdf' (No such file or directory)
+	} else {
+		console.log('Detected mime type: %s', type);
+		contentType = type;
+		// application/pdf
+	}
 });
-    var fileStream = filePath;
+	var fileStream = filePath;
 	res.setHeader('Content-Type', contentType);
 	res.writeHead(200);
-    stream.pipe(fileStream, res, function(error) {
-        //Only called when the res is closed or an error occurs
-        res.end();
-        return;
-    });
-	stream.pipe(res);
+	stream(fileStream, res, function(error) {
+		//Only called when the res is closed or an error occurs
+		res.end();
+		return;
+	});
+	stream(fileStream, res);
+	
+	};
 	};
 //
 
 // create socket instance
-  socket = new primus.Socket('http://localhost:8888'),
+  socket = new primus.Socket('http://localhost:8888');
   socket.on('connection', function (socket) {
   console.log('connection has the following headers', socket.headers);
   console.log('connection was made from', socket.address);
@@ -120,4 +122,4 @@ socket.on('data', function message(data) {
 	socket.write({ foo: 'bar' });
 	socket.write('banana');
   });
-});
+	});

@@ -2,6 +2,7 @@
           "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <script type="text/javascript"</script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.map"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -47,14 +48,13 @@
     <script src="http://code.jquery.com/jquery-2.0.3.min.map"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="smoothie.js"></script>
     <script>
         
-
+        var iosocket = io.connect('http://localhost:8888');
         $(function () {
 
-            var iosocket = io.connect('http://localhost:8888');
-
-            iosocket.on('connect', function () {
+                iosocket.on('connect', function () {
                 $('#incomingChatMessages').append($('<li>Connected</li>'));
                 alert('IOSOCKET CONNECTED');
                 iosocket.on('message', function (message) {
@@ -92,6 +92,18 @@
             iosocket.send(message);
             alert("<p>MESSAGE SENT: " + message + "</p>");
         }
+        function sendMessageBtn(message) {
+            //get message from text box
+            //make variable of message
+            
+            //pass message to server
+            iosocket.send(message);
+            var smoothie = new SmoothieChart();
+            smoothie.streamTo(document.getElementById("mycanvas"));
+            // Data
+            var line1 = new TimeSeries();
+            
+          }
         function disconnect() {
             io.close();
             alert('disconnected');
@@ -106,11 +118,7 @@
                     onclick="connect()">
                 connect to server
             </button>
-            <label for="txtMessage">
-                <input type="text"
-                       id="txtMessage"
-                       value="HTML5" />
-            </label>
+            <label for="txtMessage">&nbsp;</label><input type="text" id="txtMessage">
             <button type="button"
                     onclick="sendMessage()">
                 send message
@@ -119,13 +127,22 @@
                     onclick="disconnect()">
                 disconnect
             </button>
-            <ul>
+                <hr />
+
+                <input id="Out5On" type="button" value="led5:on" onclick="sendMessageBtn('led5:on')" />
+                <input id="Out5Off" type="button" value="led5:off" onclick="sendMessageBtn('led5:off')" />
+                <input id="Out6On" type="button" value="led6:on" onclick="sendMessageBtn('led6:on')" />
+                <input id="Out6Off" type="button" value="led6:off" onclick="sendMessageBtn('led6:off')" /><br />
+&nbsp;<hr />    <input id="Out10On" type="button" value="relay10:off" onclick="sendMessageBtn('relay1:on')" />
+                <input id="Out10Off" type="button" value="relay10:on" onclick="sendMessageBtn('relay1:off')" />
+                <input id="Out11On" type="button" value="relay11:off" onclick="sendMessageBtn('relay2:on')" />
+                <input id="Out11Off" type="button" value="relay11:on" onclick="sendMessageBtn('relay2:off')" /><br />
+                <hr />
+                <canvas id="mycanvas" width="400" height="100"></canvas>
                 Incoming Chat:
-                <ul id="incomingChatMessages"></ul>
-                <input type="text" id="outgoingChatMessage">
-        </fieldset>
-        <hr />
-        <div title="response">
+                <div id="incomingChatMessages"></div>
+                &nbsp;</fieldset><hr />
+                <div title="response">
             <input id="incomingChatMessageBox" type="text" />
         </div>
     </form>

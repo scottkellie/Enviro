@@ -62,7 +62,7 @@ primus.on('disconnection', function (spark) {
 //  });  
   
 //The data event is sendted when a message is received from the client. It's automatically decoded by the specified decoder.
-spark.on('data', function message(data) {
+primus.on('data', function message(data) {
   // the message we've received.
 });
 //The end event is sendted when the client has disconnected.
@@ -125,15 +125,15 @@ primus.on('connection', function (spark) {
   });
 
   spark.write('Hello world');
-})
-//Broadcast to all clients
-primus.write(message);
-//selective broadcast
-primus.forEach(function (spark, id, connections) {
-  if (spark.query.foo !== 'bar') return;
-
-  spark.write('message');
 });
+//Broadcast to all clients
+//primus.write(message);
+//selective broadcast
+//primus.forEach(function (spark, id, connections) {
+ // if (spark.query.foo !== 'bar') return;
+
+//  spark.write('message');
+//});
 //authorisation
 //https://github.com/primus/primus#authorization
 //Events
